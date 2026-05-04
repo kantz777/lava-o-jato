@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Brilho Rápido - Controle</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #eee;
+      margin-top: 10px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+    }
+
+    .remover {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .contador {
+      margin-top: 15px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🚗 Brilho Rápido</h1>
+
+  <input type="text" id="cliente" placeholder="Nome do cliente">
+
+  <select id="servico">
+    <option value="">Selecione o serviço</option>
+    <option value="Lavagem Simples">Lavagem Simples</option>
+    <option value="Lavagem Completa">Lavagem Completa</option>
+    <option value="Lavagem com Cera">Lavagem com Cera</option>
+  </select>
+
+  <button onclick="adicionarCarro()">Adicionar</button>
+
+  <ul id="lista"></ul>
+
+  <div class="contador">
+    Total de carros: <span id="total">0</span>
+  </div>
+</div>
+
+<script>
+  let atendimentos = JSON.parse(localStorage.getItem("carros")) || [];
+
+  function salvar() {
+    localStorage.setItem("carros", JSON.stringify(atendimentos));
+  }
+
+  function atualizarTela() {
+    const lista = document.getElementById("lista");
+    const total = document.getElementById("total");
+
+    lista.innerHTML = "";
+
+    atendimentos.forEach((carro, index) => {
+      const li = document.createElement("li");
+
+      li.innerHTML = `
+        ${carro.nome} - ${carro.servico}
+        <button class="remover" onclick="removerCarro(${index})">✔</button>
+      `;
+
+      lista.appendChild(li);
+    });
+
+    total.textContent = atendimentos.length;
+  }
+
+  function adicionarCarro() {
+    const nome = document.getElementById("cliente").value.trim();
+    const servico = document.getElementById("servico").value;
+
+    if (nome === "" || servico === "") {
+      alert("Preencha todos os campos!");
+      return;
+    }
+
+    atendimentos.push({ nome, servico });
+
+    salvar();
+    atualizarTela();
+
+    document.getElementById("cliente").value = "";
+    document.getElementById("servico").value = "";
+  }
+
+  function removerCarro(index) {
+    atendimentos.splice(index, 1);
+    salvar();
+    atualizarTela();
+  }
+
+  atualizarTela();
+</script>
+
+</body>
+</html>
